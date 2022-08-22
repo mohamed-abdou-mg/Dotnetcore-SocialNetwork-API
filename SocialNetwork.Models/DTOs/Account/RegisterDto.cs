@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SocialNetwork.Models.DTOs
+namespace SocialNetwork.Models.DTOs.Account
 {
     public class RegisterDto
     {

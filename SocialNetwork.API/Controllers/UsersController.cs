@@ -1,34 +1,42 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialNetwork.DataAccess;
+using SocialNetwork.DataAccess.Repository.IRepository;
+using SocialNetwork.Models.DTOs.User;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SocialNetwork.API.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UsersController(ApplicationDbContext dbContext)
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _dbContext = dbContext;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            return Ok(await _dbContext.Users.ToListAsync());
+            var usersDb = await _userRepository.GetUsersAsync();
+            var usersDto = _mapper.Map<IEnumerable<AppUserDto>>(usersDb);
+            return Ok(usersDto);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUsers(int id)
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetUser(string username)
         {
-            return Ok(await _dbContext.Users.FindAsync(id));
+            var userDb = await _userRepository.GetUserByUsernameAsync(username);
+            var userDto = _mapper.Map<AppUserDto>(userDb);
+            return Ok(userDto);
         }
+
     }
 }

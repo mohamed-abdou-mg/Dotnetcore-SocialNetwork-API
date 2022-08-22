@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialNetwork.DataAccess;
 using SocialNetwork.Models;
-using SocialNetwork.Models.DTOs;
+using SocialNetwork.Models.DTOs.Account;
 using SocialNetwork.Services.JwtService;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
