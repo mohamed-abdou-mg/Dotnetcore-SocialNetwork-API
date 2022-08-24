@@ -22,6 +22,7 @@ namespace SocialNetwork.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationExtention();
+            services.AddServicesExtention(Configuration);
             services.AddDatabaseExtention(Configuration);
             services.AddAuthenticationExtention(Configuration);
             
@@ -53,7 +54,7 @@ namespace SocialNetwork.API
             app.UseCors(options =>
                 options.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

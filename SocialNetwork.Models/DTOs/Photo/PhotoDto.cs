@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SocialNetwork.Models.DTOs.User
+namespace SocialNetwork.Models.DTOs.Photo
 {
     public class PhotoDto
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialNetwork.DataAccess;
 using SocialNetwork.Models;
@@ -10,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace SocialNetwork.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AccountsController : ControllerBase
+    public class AccountsController : BaseApiController
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountsController(ApplicationDbContext dbContext, ITokenService tokenService)
+        public AccountsController(ApplicationDbContext dbContext, ITokenService tokenService, IMapper mapper)
         {
             _dbContext = dbContext;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -29,14 +30,13 @@ namespace SocialNetwork.API.Controllers
         {
             if (await UserExists(registerDto.Username)) return BadRequest("Username is already taken");
 
+            var user = _mapper.Map<AppUser>(registerDto);
+            
             using var hmac = new HMACSHA512();
 
-            var user = new AppUser()
-            {
-                Username = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.Username = registerDto.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -44,7 +44,8 @@ namespace SocialNetwork.API.Controllers
             return Ok(new UserDto()
             {
                 Username = user.Username,
-                token = _tokenService.CreateToken(user)
+                token = _tokenService.CreateToken(user),
+                Gender = user.Gender
             });
         }
         
@@ -66,7 +67,8 @@ namespace SocialNetwork.API.Controllers
             return Ok(new UserDto()
             {
                 Username = user.Username,
-                token = _tokenService.CreateToken(user)
+                token = _tokenService.CreateToken(user),
+                Gender = user.Gender
             });
         }
 

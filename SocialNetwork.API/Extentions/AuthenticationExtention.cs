@@ -10,23 +10,15 @@ namespace SocialNetwork.API.Extentions
     {
         public static IServiceCollection AddAuthenticationExtention(this IServiceCollection services, IConfiguration Configuration)
         {
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken"]))
-                    //ValidateIssuer = true,
-                    //ValidateAudience = true,
-                    //ValidIssuer = "https://localhost:44388",
-                    //ValidAudience = "https://localhost:44388",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
 

@@ -11,29 +11,26 @@ namespace SocialNetwork.Services.JwtService
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration Configuration;
-
+        private readonly SymmetricSecurityKey _key;
         public TokenService(IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtToken"]));
         }
         public string CreateToken(AppUser appUser)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken"]));
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha512Signature);
-
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.NameId, appUser.Username)
+                new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, appUser.Username)
             };
+
+            var signinCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescripitor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(5),
-                SigningCredentials = signinCredentials,
-                //Issuer = "https://localhost:5001",
-                //Audience = "https://localhost:5001"
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = signinCredentials
              };
 
             var tokenHandler = new JwtSecurityTokenHandler();
