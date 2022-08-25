@@ -20,5 +20,7 @@ namespace SocialNetwork.Models
         public string City { get; set; }
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }
+        public ICollection<Like> LikedByUsers { get; set; }
+        public ICollection<Like> LikedUsers { get; set; }
     }
 }

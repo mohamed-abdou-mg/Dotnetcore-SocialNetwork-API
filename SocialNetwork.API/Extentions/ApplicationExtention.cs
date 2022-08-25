@@ -10,6 +10,7 @@ namespace SocialNetwork.API.Extentions
         public static IServiceCollection AddApplicationExtention(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ILikeRepository, LikeRepository>();
             services.AddScoped<LogUserActivity>();
             return services;
         }
